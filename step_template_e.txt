@@ -1,0 +1,38 @@
+*Step, name=Step-1, nlgeom=NO, inc=100
+*Static
+0.01, 1., 1e-05, 1.
+*Dsload
+Surf-2, P, 0.101
+*Temperature
+inner,  38.0100
+set120, 24.7515
+set140, 17.8712
+set160, 14.5603
+set180, 13.0692
+set200, 12.4318
+set220, 12.1700
+set240, 12.0656
+set260, 12.0249
+set280, 12.0093
+set300, 12.0035
+set320, 12.0013
+set340, 12.0005
+set360, 12.0002
+set380, 12.0001
+set400, 12.0000
+set420, 12.0000
+set440, 12.0000
+set460, 12.0000
+set480, 12.0000
+outer,  12.0000
+*Restart, write, frequency=0
+*Output, field, variable=PRESELECT
+*Node print, Frequency=11
+COOR1, COOR2, U1, U2
+*El print, Frequency=11
+COORD1, COORD2, S,
+*El print, Frequency=11
+COORD1, COORD2, E, 
+*Output, history, variable=PRESELECT
+*End Step
+** ----------------------------------------------------------------
