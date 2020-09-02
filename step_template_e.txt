@@ -27,12 +27,6 @@ set480, 12.0000
 outer,  12.0000
 *Restart, write, frequency=0
 *Output, field, variable=PRESELECT
-*Node print, Frequency=11
-COOR1, COOR2, U1, U2
-*El print, Frequency=11
-COORD1, COORD2, S,
-*El print, Frequency=11
-COORD1, COORD2, E, 
 *Output, history, variable=PRESELECT
 *End Step
 ** ----------------------------------------------------------------
