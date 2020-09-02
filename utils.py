@@ -6,25 +6,25 @@ class Keyword(object):
         self.keyword_name = keyword_name
         self.params = params
         self.data = list()
-    
+
     @classmethod
     def from_line(cls, line):
         keyword_info = process_keyword(line)
         return cls(keyword_info['name'], **keyword_info['params'])
-    
+
     def __bool__(self):
         return True
-    
+
     def __eq__(self, other):
         if isinstance(other, str):
             return self.keyword_name == other
         elif isinstance(other, Keyword):
             return self.keyword_name == other.keyword_name
-    
+
     def read_data_as_list(self, line):
         parts = line.replace(' ', '').split(',')
         self.data.append(parts)
-    
+
     def get_lines(self):
         out_params = list()
         for k, v in self.params.items():
@@ -41,12 +41,12 @@ class Keyword(object):
 class Step(object):
     def __init__(self, keywords):
         self.keywords: List[Keyword] = keywords
-    
+
     @staticmethod
     def from_template(template_file):
         step = get_steps(template_file)[0]
         return step
-    
+
     def __getitem__(self, item):
         if isinstance(item, int):
             return self.keywords[item]
@@ -56,10 +56,10 @@ class Step(object):
                     return keyword
         else:
             raise NotImplementedError('Unsupported type of index', dict(item_type=str(type(item))))
-    
+
     def __len__(self):
         return len(self.keywords)
-    
+
     def get_lines(self):
         last_line = "** ----------------------------------------------------------------"
         # return "\n".join([x.render() for x in self.keywords] + [last_line])
@@ -72,7 +72,7 @@ class Step(object):
 def process_keyword(line):
     # logger.info("line: %s",line)
     keyword_info = dict()
-    parts = line.split(', ')
+    parts = [x.strip() for x in line.split(',')]
     keyword_info['name'] = parts[0][1:]
     keyword_params = dict()
     for key_value_pair in parts[1:]:
@@ -85,19 +85,39 @@ def process_keyword(line):
     return keyword_info
 
 
+def get_keywords(keywords_filepath):
+    with open(keywords_filepath) as file:
+        lines = file.readlines()
+
+    keywords = list()
+    current_keyword = None
+    for i, line in enumerate(lines):
+        line = line.strip()  # remove trailing spaces and newline characters
+        # logger.debug("line: %s", line)
+        if line.startswith('**'):  # I suppose double star represents a commented line?
+            continue
+        elif line.startswith('*'):  # Keyword line. Contains name of the keyword and optionally some parameters
+            current_keyword = Keyword.from_line(line)
+            keywords.append(current_keyword)
+        elif current_keyword:
+            current_keyword.read_data_as_list(line)
+    return keywords
+
+
 def get_steps(steps_filepath):
     with open(steps_filepath) as file:
         lines = file.readlines()
-    
+
     steps = list()
     step_keywords = list()
     current_keyword = None
     for i, line in enumerate(lines):
         line = line.strip()  # remove trailing spaces and newline characters
         # logger.debug("line: %s", line)
-        if line.startswith('**'):  # I suppose double start represents a commented line?
+        if line.startswith('**'):  # I suppose double star represents a commented line?
             continue
         elif line.startswith('*'):  # Keyword line. Contains name of the keyword and optionally some parameters
+
             current_keyword = Keyword.from_line(line)
             step_keywords.append(current_keyword)
             if current_keyword.keyword_name == 'End Step':
@@ -105,7 +125,6 @@ def get_steps(steps_filepath):
                 step_keywords.clear()
         elif current_keyword:
             current_keyword.read_data_as_list(line)
-    
     return steps
 
 
