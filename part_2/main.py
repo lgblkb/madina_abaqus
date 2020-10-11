@@ -21,7 +21,6 @@ def create_lateral_pseudo_steps():
     lateral_files = files_folder.joinpath('lateral')
     element_data = pd.read_excel(lateral_files.joinpath('element_data.xlsx'), header=None)
     inital_gap = pd.read_excel(lateral_files.joinpath('initial_gap.xlsx'), header=None)
-
     surface_behav = pd.read_excel(lateral_files.joinpath('surface_behav.xlsx'), header=None)
     surface_behav = list(surface_behav.ffill().groupby(0).apply(lambda df: df.iloc[:, 1:].values))
     assert len(surface_behav) == inital_gap.shape[0] == 61
@@ -52,12 +51,10 @@ def create_lateral_pseudo_steps():
 
         # Update *SURFACE BEHAVIOR
         surfbeh_kw = pseudo_step['SURFACE BEHAVIOR']
-        surfbeh_kw.data = list(surface_behav[0])
+        surfbeh_kw.data = list(surface_behav[i])
         pseudo_steps.append(pseudo_step)
 
     write_steps(pseudo_steps, results_folder.joinpath('lateral_pseudo_steps.txt'))
-
-    pass
 
 
 def create_end_pseudo_steps():
